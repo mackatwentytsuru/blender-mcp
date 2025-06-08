@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  blender-mcp:
+    build: .
+    container_name: blender-mcp-server
+    environment:
+      # Blender connection settings
+      - BLENDER_HOST=172.31.32.1  # Windows host IP from WSL2
+      - BLENDER_PORT=9876
+      
+      # Optional API keys (set these in .env file)
+      - POLYHAVEN_API_KEY=${POLYHAVEN_API_KEY:-}
+      - SKETCHFAB_API_KEY=${SKETCHFAB_API_KEY:-}
+      - HYPER3D_API_KEY=${HYPER3D_API_KEY:-}
+    
+    # Enable host networking for Windows/WSL2 compatibility
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    restart: unless-stopped

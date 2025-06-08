@@ -29,7 +29,7 @@ bl_info = {
 RODIN_FREE_TRIAL_KEY = "k9TcfFoEhNd9cCPP2guHAHHHkctZHIRhZDywZ1euGUXwihbYLpOjQhofby80NJez"
 
 class BlenderMCPServer:
-    def __init__(self, host='localhost', port=9876):
+    def __init__(self, host='0.0.0.0', port=9876):
         self.host = host
         self.port = port
         self.running = False
@@ -1764,6 +1764,29 @@ class BLENDERMCP_OT_StopServer(bpy.types.Operator):
         
         return {'FINISHED'}
 
+# Auto-start handler
+@bpy.app.handlers.persistent
+def blendermcp_autostart_handler(dummy):
+    """Handler to auto-start the MCP server when Blender starts"""
+    # Small delay to ensure Blender is fully initialized
+    def delayed_start():
+        try:
+            # Check if server is not already running
+            if not bpy.context.scene.blendermcp_server_running:
+                # Create and start the server
+                if not hasattr(bpy.types, "blendermcp_server") or not bpy.types.blendermcp_server:
+                    bpy.types.blendermcp_server = BlenderMCPServer(port=bpy.context.scene.blendermcp_port)
+                
+                bpy.types.blendermcp_server.start()
+                bpy.context.scene.blendermcp_server_running = True
+                print("BlenderMCP server auto-started successfully")
+        except Exception as e:
+            print(f"Failed to auto-start BlenderMCP server: {e}")
+        return None
+    
+    # Register a timer to start the server after a short delay
+    bpy.app.timers.register(delayed_start, first_interval=1.0)
+
 # Registration functions
 def register():
     bpy.types.Scene.blendermcp_port = IntProperty(
@@ -1826,13 +1849,23 @@ def register():
     bpy.utils.register_class(BLENDERMCP_OT_StartServer)
     bpy.utils.register_class(BLENDERMCP_OT_StopServer)
     
-    print("BlenderMCP addon registered")
+    # Add the auto-start handler to the load_post handlers
+    bpy.app.handlers.load_post.append(blendermcp_autostart_handler)
+    
+    # Also trigger auto-start immediately when addon is enabled
+    blendermcp_autostart_handler(None)
+    
+    print("BlenderMCP addon registered with auto-start")
 
 def unregister():
     # Stop the server if it's running
     if hasattr(bpy.types, "blendermcp_server") and bpy.types.blendermcp_server:
         bpy.types.blendermcp_server.stop()
         del bpy.types.blendermcp_server
+    
+    # Remove the auto-start handler
+    if blendermcp_autostart_handler in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.remove(blendermcp_autostart_handler)
     
     bpy.utils.unregister_class(BLENDERMCP_PT_Panel)
     bpy.utils.unregister_class(BLENDERMCP_OT_SetFreeTrialHyper3DAPIKey)

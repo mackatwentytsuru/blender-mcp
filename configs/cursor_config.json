@@ -1,0 +1,11 @@
+{
+  "blender-mcp": {
+    "command": "docker",
+    "args": ["exec", "-i", "blender-mcp-server", "blender-mcp"],
+    "env": {
+      "POLYHAVEN_API_KEY": "",
+      "SKETCHFAB_API_KEY": "",
+      "HYPER3D_API_KEY": ""
+    }
+  }
+}
