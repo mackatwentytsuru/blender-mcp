@@ -1,0 +1,39 @@
+BlenderMCP
+Copyright 2025 Yuki Tsuroka
+
+This project is based on BlenderGPT by gd3kr:
+https://github.com/gd3kr/BlenderGPT
+Copyright (c) 2023 gd3kr
+
+Licensed under the MIT License.
+
+Third-party components and acknowledgments:
+
+1. Model Context Protocol (MCP)
+   Copyright (c) Anthropic
+   Licensed under MIT License
+   https://github.com/anthropics/mcp
+
+2. Blender Python API
+   Copyright (c) Blender Foundation
+   Licensed under GPL v3
+   https://www.blender.org/
+
+3. Icons and Assets:
+   - hammer-icon.png: Original work, MIT License
+   - addon-instructions.png: Screenshot, Fair Use
+
+4. External Service Integrations:
+   - PolyHaven API: https://polyhaven.com/
+     Content licensed under CC0
+   - Sketchfab API: https://sketchfab.com/
+     Individual model licenses vary
+   - Hyper3D API: https://hyper3d.ai/
+     Service terms apply
+
+5. Python Dependencies:
+   See pyproject.toml and uv.lock for complete list
+   Each dependency retains its original license
+
+DISCLAIMER: This software executes arbitrary Python code within Blender.
+Use only in trusted environments with proper security measures.

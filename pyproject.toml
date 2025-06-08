@@ -1,11 +1,11 @@
 [project]
 name = "blender-mcp"
-version = "1.2"
+version = "0.2.0"
 description = "Blender integration through the Model Context Protocol"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Yuki Tsuroka", email = "yukitsuroka@users.noreply.github.com"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -14,7 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "mcp[cli]>=1.3.0",
+    "mcp[cli]>=1.3.0,<2.0.0",
 ]
 
 [project.scripts]
@@ -28,5 +28,7 @@ build-backend = "setuptools.build_meta"
 package-dir = {"" = "src"}
 
 [project.urls]
-"Homepage" = "https://github.com/yourusername/blender-mcp"
-"Bug Tracker" = "https://github.com/yourusername/blender-mcp/issues"
+"Homepage" = "https://github.com/mackatwentytsuru/blender-mcp"
+"Bug Tracker" = "https://github.com/mackatwentytsuru/blender-mcp/issues"
+"Documentation" = "https://github.com/mackatwentytsuru/blender-mcp/wiki"
+"Changelog" = "https://github.com/mackatwentytsuru/blender-mcp/blob/main/CHANGELOG.md"

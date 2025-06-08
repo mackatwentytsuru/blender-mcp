@@ -1,109 +1,77 @@
-# 🎨 BlenderMCP - AI-Powered 3D Creation Assistant
+# BlenderMCP
 
-<div align="center">
+[![CI](https://github.com/mackatwentytsuru/blender-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/mackatwentytsuru/blender-mcp/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Blender 3.0+](https://img.shields.io/badge/blender-3.0+-orange.svg)](https://www.blender.org/)
+[![Security Policy](https://img.shields.io/badge/security-policy-red.svg)](SECURITY.md)
 
-![BlenderMCP](assets/hammer-icon.png)
+Model Context Protocol server for controlling Blender 3D via AI assistants (Claude Desktop, Claude Code, Cursor).
 
-**🤖 Claude × 🎮 Blender = ∞ Creative Possibilities**
+⚠️ **Security Warning**: This software executes arbitrary Python code. See [SECURITY.md](SECURITY.md) for details.
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Blender](https://img.shields.io/badge/Blender-3.0%2B-orange.svg)](https://www.blender.org/)
-[![MCP](https://img.shields.io/badge/MCP-Protocol-green.svg)](https://modelcontextprotocol.io/)
+## Architecture
 
-[English](#english) | [日本語](#japanese)
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Claude    │     │   Claude    │     │   Cursor    │
+│   Desktop   │     │    Code     │     │             │
+└──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+       │                   │                     │
+       └───────────────────┴─────────────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │ MCP Server  │ (Port: stdio)
+                    │   (Docker)  │
+                    └──────┬──────┘
+                           │ TCP Socket
+                    ┌──────▼──────┐
+                    │   Blender   │ (Port: 9876)
+                    │    Addon    │
+                    └─────────────┘
+```
 
-</div>
-
----
-
-<a name="english"></a>
-## 🌟 What is BlenderMCP?
-
-BlenderMCP is a revolutionary bridge that connects Claude AI (Desktop, Code, Cursor) with Blender 3D software through the Model Context Protocol (MCP). Create, modify, and manipulate 3D scenes using natural language! 🚀
-
-### ✨ Key Features
-
-- 🎯 **Multi-Client Support**: Works with Claude Desktop, Claude Code, and Cursor
-- 🐳 **Docker Support**: Easy deployment and consistent environment
-- 🌐 **Cross-Platform**: Windows, macOS, Linux (with WSL2 support)
-- 🔄 **Auto-Start**: Server starts automatically when Blender launches
-- 🎨 **Asset Integration**: PolyHaven, Sketchfab, and Hyper3D support
-- 📸 **Viewport Screenshots**: Capture and share your 3D views
-- 🔧 **Full Python Access**: Execute any Blender Python code
-
-### 🎬 Quick Demo
-
-<details>
-<summary>📹 Watch Video Demos</summary>
-
-- [Basic Usage](https://github.com/user-attachments/assets/example1.mp4)
-- [Advanced Features](https://github.com/user-attachments/assets/example2.mp4)
-- [Docker Setup](https://github.com/user-attachments/assets/example3.mp4)
-
-</details>
-
-## 🚀 Getting Started
+## Quick Start
 
 ### Prerequisites
 
-- 🎮 Blender 3.0 or newer
-- 🐍 Python 3.10+
-- 🐳 Docker (for Docker setup)
-- 🤖 Claude Desktop/Code/Cursor
+- Blender 3.0+
+- Python 3.10-3.12
+- Docker (optional, recommended)
+- One of: Claude Desktop, Claude Code, or Cursor
 
-### 🎯 Quick Install
+### Installation
 
-#### Option 1: Standard Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/blender-mcp.git
-cd blender-mcp
-
-# Install dependencies
-pip install -e .
-```
-
-#### Option 2: Docker Installation (Recommended) 🐳
+#### Option 1: Docker (Recommended)
 
 ```bash
-# Clone and navigate
-git clone https://github.com/your-username/blender-mcp.git
+git clone https://github.com/mackatwentytsuru/blender-mcp.git
 cd blender-mcp
-
-# Start with Docker Compose
 docker-compose up -d
 ```
 
-### 📦 Blender Addon Installation
+#### Option 2: Local Installation
 
-1. Download `addon.py` from this repository
-2. In Blender: Edit → Preferences → Add-ons → Install
-3. Select the downloaded `addon.py` file
-4. Enable "BlenderMCP" addon ✅
-5. The server now auto-starts with Blender! 🎉
+```bash
+git clone https://github.com/mackatwentytsuru/blender-mcp.git
+cd blender-mcp
+pip install -e .  # or use uv: uv pip install -e .
+```
 
-## 🔧 Configuration
+### Blender Addon Setup
 
-### 🖥️ Claude Desktop
+1. Install addon:
+   - Edit → Preferences → Add-ons → Install
+   - Select `addon.py`
+   - Enable "BlenderMCP" addon
+2. Server auto-starts on Blender launch (port 9876)
 
-<details>
-<summary>Windows Configuration</summary>
+### Client Configuration
+
+#### Claude Desktop (Windows)
 
 Edit `%APPDATA%\Claude\claude_desktop_config.json`:
 
-```json
-{
-  "mcpServers": {
-    "blender-mcp": {
-      "command": "uvx",
-      "args": ["blender-mcp"]
-    }
-  }
-}
-```
-
-For Docker setup:
 ```json
 {
   "mcpServers": {
@@ -115,223 +83,137 @@ For Docker setup:
 }
 ```
 
-</details>
+#### Claude Code (WSL2)
 
-<details>
-<summary>macOS Configuration</summary>
-
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "blender-mcp": {
-      "command": "uvx",
-      "args": ["blender-mcp"]
-    }
-  }
-}
-```
-
-</details>
-
-### 💻 Claude Code
-
-For global configuration, add to `~/.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "blender-mcp": {
-      "type": "stdio",
-      "command": "docker",
-      "args": ["exec", "-i", "blender-mcp-server", "blender-mcp"]
-    }
-  }
-}
-```
-
-Or use the helper script:
+Per-project configuration:
 ```bash
-~/mcp設定ツール/add-blender-mcp.sh
+claude mcp add blender-mcp docker exec -i blender-mcp-server blender-mcp
 ```
 
-### 🎯 Cursor
+#### Cursor
 
-Add to Cursor settings → MCP Servers:
-
+Add to MCP settings:
 ```json
 {
   "blender-mcp": {
-    "command": "uvx",
-    "args": ["blender-mcp"]
+    "command": "docker",
+    "args": ["exec", "-i", "blender-mcp-server", "blender-mcp"]
   }
 }
 ```
 
-## 🎨 Usage Examples
+## API Reference
 
-### Basic Commands
+### Available Tools
 
-```
-👤: Create a red cube
-🤖: I'll create a red cube for you...
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `execute_blender_code` | Execute Python code in Blender | `code: str` |
+| `get_scene_info` | Get current scene information | None |
+| `get_object_info` | Get object details | `object_name: str` |
+| `get_viewport_screenshot` | Capture viewport | `width: int, height: int` |
 
-👤: Add lighting to the scene
-🤖: Adding three-point lighting setup...
+### Environment Variables
 
-👤: Take a screenshot
-🤖: Here's the current viewport...
-```
+```bash
+# Connection settings
+BLENDER_HOST=localhost    # Host where Blender is running
+BLENDER_PORT=9876        # Port for socket connection
 
-### Advanced Examples
+# API keys (optional)
+POLYHAVEN_API_KEY=       # For asset downloads
+SKETCHFAB_API_KEY=       # For model search
+HYPER3D_API_KEY=         # For AI generation
 
-```python
-# Create animated scene
-👤: Create a spinning galaxy of cubes
-
-# Import assets
-👤: Download and add a tree model from PolyHaven
-
-# Complex operations
-👤: Create a procedural material with noise texture
-```
-
-## 🌟 Enhanced Features
-
-### 🌍 PolyHaven Integration
-- Search and download HDRIs, textures, and models
-- Automatic material setup
-- One-command asset import
-
-### 🎭 Sketchfab Support
-- Search millions of 3D models
-- Direct import with materials
-- API key management
-
-### 🤖 Hyper3D AI Generation
-- Text-to-3D model generation
-- Image-to-3D conversion
-- Real-time preview
-
-## 🐳 Docker Deployment
-
-### Multi-Client Architecture
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Claude    │     │   Claude    │     │   Cursor    │
-│   Desktop   │     │    Code     │     │             │
-└──────┬──────┘     └──────┬──────┘     └──────┬──────┘
-       │                   │                     │
-       └───────────────────┴─────────────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │   Docker    │
-                    │ MCP Server  │
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │   Blender   │
-                    │   (0.0.0.0) │
-                    └─────────────┘
+# Security (not yet implemented)
+MCP_AUTH_TOKEN=          # Authentication token
 ```
 
-### 🚀 Quick Docker Setup
+## Security Considerations
 
-1. **Start the container**:
-   ```bash
-   docker-compose up -d
-   ```
+**Current security issues:**
+1. No authentication on socket connection
+2. Arbitrary code execution without sandboxing
+3. Listens on all interfaces (0.0.0.0)
 
-2. **Configure your client** (see configuration section above)
+**Mitigations:**
+- Use firewall to restrict access
+- Run in isolated environment
+- Only use with trusted AI clients
+- See [SECURITY.md](SECURITY.md) for details
 
-3. **Start creating!** 🎨
+## Development
 
-## 🛠️ Troubleshooting
+### Running Tests
 
-<details>
-<summary>Connection Issues</summary>
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"  # or: uv pip install -e ".[dev]"
 
-- Ensure Blender addon is enabled and server is running
-- Check firewall settings for port 9876
-- For Docker: verify container is running with `docker ps`
+# Run tests
+pytest tests/ -v
 
-</details>
+# Run linting
+ruff check src/
+mypy src/
+```
 
-<details>
-<summary>WSL2 Specific</summary>
+### Docker Development
 
-- Use the provided scripts in `~/mcp設定ツール/`
-- Check Windows firewall allows WSL2 connections
-- Verify Docker Desktop WSL2 integration is enabled
+```bash
+# Build image
+docker build -t blender-mcp:dev .
 
-</details>
+# Run with live code reload
+docker run -v $(pwd)/src:/app/src blender-mcp:dev
 
-## 🤝 Contributing
+# View logs
+docker logs -f blender-mcp-server
+```
 
-We love contributions! Whether you're fixing bugs, adding features, or improving documentation, your help is welcome.
+## Troubleshooting
+
+### Connection Refused
+
+1. Check Blender addon is enabled and running
+2. Verify port 9876 is not blocked by firewall
+3. For Docker: ensure container can reach host
+
+### WSL2 Issues
+
+- Windows host IP may change on restart
+- Check with: `ip route | grep default | awk '{print $3}'`
+- Update `BLENDER_HOST` environment variable
+
+### Performance
+
+- Large operations block other clients
+- Viewport screenshots are base64 encoded (size overhead)
+- Complex scenes may timeout
+
+## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing`)
+3. Add tests for new functionality
+4. Ensure CI passes
+5. Submit Pull Request
 
-## 📄 License
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## License
 
-## 🙏 Acknowledgments
+MIT License - see [LICENSE](LICENSE) file.
 
-- Original [BlenderGPT](https://github.com/gd3kr/BlenderGPT) by gd3kr
-- [Model Context Protocol](https://modelcontextprotocol.io/) team
-- The amazing Blender community 🎨
+Based on [BlenderGPT](https://github.com/gd3kr/BlenderGPT) by gd3kr.
+See [NOTICE](NOTICE) for third-party attributions.
 
-## 📞 Support
+## Changelog
 
-- 📧 Issues: [GitHub Issues](https://github.com/your-username/blender-mcp/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/your-username/blender-mcp/discussions)
-- 📖 Documentation: [Wiki](https://github.com/your-username/blender-mcp/wiki)
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
----
+## Support
 
-<a name="japanese"></a>
-## 🌟 BlenderMCPとは？
-
-BlenderMCPは、Model Context Protocol (MCP)を通じてClaude AI（Desktop、Code、Cursor）とBlender 3Dソフトウェアを接続する革新的なブリッジです。自然言語で3Dシーンを作成、修正、操作できます！🚀
-
-### ✨ 主な機能
-
-- 🎯 **マルチクライアント対応**: Claude Desktop、Claude Code、Cursor対応
-- 🐳 **Docker対応**: 簡単なデプロイと一貫した環境
-- 🌐 **クロスプラットフォーム**: Windows、macOS、Linux（WSL2対応）
-- 🔄 **自動起動**: Blender起動時にサーバーが自動的に開始
-- 🎨 **アセット統合**: PolyHaven、Sketchfab、Hyper3D対応
-- 📸 **ビューポートスクリーンショット**: 3Dビューのキャプチャと共有
-- 🔧 **完全なPythonアクセス**: あらゆるBlender Pythonコードを実行
-
-### 使い方の例
-
-```
-👤: 赤い立方体を作って
-🤖: 赤い立方体を作成します...
-
-👤: シーンに照明を追加して
-🤖: 3点照明のセットアップを追加します...
-
-👤: スクリーンショットを撮って
-🤖: 現在のビューポートです...
-```
-
-詳細な日本語のセットアップガイドは[DOCKER_SETUP_JP.md](DOCKER_SETUP_JP.md)をご覧ください。
-
----
-
-<div align="center">
-
-**Made with ❤️ by the Creative Community**
-
-🎨 Happy Blending! 🚀
-
-</div>
+- Issues: [GitHub Issues](https://github.com/mackatwentytsuru/blender-mcp/issues)
+- Security: See [SECURITY.md](SECURITY.md)
+- Documentation: [Wiki](https://github.com/mackatwentytsuru/blender-mcp/wiki)
